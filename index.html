@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>From Dhaka to Jashore — Our Reunion ❤️</title>
+  <style>
+    :root {
+      --pink: #ff3377;
+      --pink-glow: #ff70a5;
+      --card-bg: rgba(255, 255, 255, 0.08);
+      --card-border: rgba(255, 255, 255, 0.15);
+      --text-white: #ffffff;
+      --text-sub: #f3d5fb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 10%, #3a0b4d 0%, #160424 65%, #0d0116 100%);
+      color: var(--text-white);
+    }
+
+    #starsBg, #celebrationCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100dvh;
+      pointer-events: none;
+    }
+    #starsBg { z-index: 0; }
+    #celebrationCanvas { z-index: 50; }
+
+    .app-screen {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 420px;
+      height: 100dvh;
+      margin: 0 auto;
+      padding: calc(env(safe-area-inset-top, 6px) + 6px) 12px calc(env(safe-area-inset-bottom, 8px) + 8px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    /* 1. Header */
+    header {
+      text-align: center;
+      padding: 2px 0;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(255, 51, 119, 0.22);
+      border: 1px solid rgba(255, 51, 119, 0.4);
+      color: #ffa1c4;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    h1 {
+      font-size: 1.22rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 40%, #ff9ebb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+    .sub {
+      font-size: 0.74rem;
+      color: var(--text-sub);
+      opacity: 0.85;
+    }
+
+    /* 2. Couple Stage Arena */
+    .couple-card {
+      padding: 10px 14px;
+      text-align: center;
+      position: relative;
+    }
+    .stage-title {
+      font-size: 0.7rem;
+      color: #dfb2ff;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .characters-stage {
+      position: relative;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+    .bridge-line {
+      position: absolute;
+      left: 30px;
+      right: 30px;
+      top: 50%;
+      height: 2px;
+      border-bottom: 2px dashed rgba(255, 255, 255, 0.25);
+      z-index: 1;
+    }
+    .char-node {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.1s linear, opacity 0.3s ease;
+      will-change: transform;
+    }
+    .char-svg-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #4d1560 0%, #20032c 100%);
+      border: 2px solid var(--pink-glow);
+      box-shadow: 0 0 12px rgba(255, 51, 119, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .char-svg-wrap svg {
+      width: 34px;
+      height: 34px;
+    }
+    .char-label {
+      font-size: 0.65rem;
+      color: #ffbed4;
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    /* Illustrated Hug Badge */
+    .hug-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      z-index: 5;
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ff3377 0%, #7d103d 100%);
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 20px rgba(255, 51, 119, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+    }
+    .hug-center svg {
+      width: 44px;
+      height: 44px;
+    }
+    .hug-center.active {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      animation: hugPulse 1.4s infinite alternate ease-in-out;
+    }
+    @keyframes hugPulse {
+      from { transform: translate(-50%, -50%) scale(0.96); }
+      to { transform: translate(-50%, -50%) scale(1.14); }
+    }
+
+    /* 3. Distance & Live Quote */
+    .metric-card {
+      padding: 9px 12px;
+      text-align: center;
+    }
+    .distance-counter {
+      font-size: 2.2rem;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(180deg, #ffffff 40%, #ff8db3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 5px;
+    }
+    .distance-counter .unit {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ff9ebb;
+      -webkit-text-fill-color: #ff9ebb;
+    }
+    .quote-box {
+      margin-top: 5px;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.76rem;
+      font-style: italic;
+      color: #ffe8f2;
+      background: rgba(0, 0, 0, 0.22);
+      border-radius: 9px;
+      padding: 4px 8px;
+      transition: opacity 0.2s ease;
+    }
+
+    /* 4. Bus Highway */
+    .road-card {
+      padding: 10px 12px;
+    }
+    .road-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: #d8b8e8;
+      font-weight: 600;
+      margin-bottom: 7px;
+    }
+    .road-track {
+      position: relative;
+      height: 36px;
+      background: rgba(16, 4, 25, 0.8);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+    }
+    .road-line {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+    }
+    .road-fill {
+      position: absolute;
+      left: 12px;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, #ff3377, #ffd166);
+      box-shadow: 0 0 8px #ff3377;
+      border-radius: 2px;
+    }
+    .bus-sprite {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.55rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 8px rgba(255, 51, 119, 0.6));
+      z-index: 3;
+      will-change: left;
+    }
+
+    .stop-indicator {
+      margin-top: 7px;
+      background: rgba(0, 0, 0, 0.28);
+      border-radius: 9px;
+      padding: 5px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+    }
+    .pill {
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      margin-right: 4px;
+    }
+    .pill-curr { background: var(--pink); color: #fff; }
+    .pill-next { background: rgba(255,255,255,0.15); color: #ffd166; }
+    .stop-text {
+      font-weight: 600;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    /* 5. Horizontal Checkpoints Dots */
+    .checkpoint-dots-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      gap: 4px;
+    }
+    .cp-dot-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+    .cp-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      font-size: 0.58rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+    }
+    .cp-dot-wrap.completed .cp-dot {
+      background: #4ade80;
+      border-color: #22c55e;
+      color: #0c3313;
+    }
+    .cp-dot-wrap.active .cp-dot {
+      background: var(--pink);
+      border-color: #fff;
+      box-shadow: 0 0 8px var(--pink-glow);
+      transform: scale(1.15);
+    }
+    .cp-tiny-name {
+      font-size: 0.52rem;
+      color: rgba(255, 255, 255, 0.55);
+      margin-top: 3px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 38px;
+    }
+    .cp-dot-wrap.active .cp-tiny-name {
+      color: #ffd885;
+      font-weight: 700;
+    }
+
+    /* 6. Action Button */
+    .btn-wrap {
+      padding-top: 2px;
+    }
+    .cta-btn {
+      width: 100%;
+      padding: 13px 18px;
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #ff3377 0%, #cb0f51 100%);
+      color: #ffffff;
+      font-size: 0.96rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      box-shadow: 0 6px 20px rgba(255, 51, 119, 0.45);
+      cursor: pointer;
+    }
+    .cta-btn:active {
+      transform: scale(0.97);
+    }
+    .cta-btn:disabled {
+      background: linear-gradient(135deg, #5c203f 0%, #3a1528 100%);
+      color: rgba(255, 255, 255, 0.5);
+      box-shadow: none;
+    }
+
+    /* Final Surprise Popup Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100dvh;
+      background: rgba(14, 2, 22, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .love-card-modal {
+      background: linear-gradient(145deg, rgba(65, 14, 75, 0.96), rgba(30, 6, 40, 0.98));
+      border: 1.5px solid rgba(255, 105, 160, 0.5);
+      border-radius: 20px;
+      padding: 20px 18px;
+      text-align: center;
+      box-shadow: 0 12px 36px rgba(255, 51, 119, 0.35);
+      transform: scale(0.85);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 360px;
+      width: 100%;
+    }
+    .modal-overlay.show .love-card-modal {
+      transform: scale(1);
+    }
+    .modal-hug-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ff3377 0%, #7d103d 100%);
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 20px rgba(255, 51, 119, 0.7);
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: hugPulse 1.2s infinite alternate ease-in-out;
+    }
+    .modal-hug-icon svg {
+      width: 44px;
+      height: 44px;
+    }
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffe6ef;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .modal-body {
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: #f7d4e5;
+      margin-bottom: 15px;
+    }
+    .replay-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .replay-btn:active {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="starsBg"></canvas>
+  <canvas id="celebrationCanvas"></canvas>
+
+  <div class="app-screen">
+
+    <!-- 1. Header -->
+    <header>
+      <div class="badge">🎂 Birthday Special</div>
+      <h1>From Dhaka to Jashore</h1>
+      <p class="sub">Our Reunion ❤️</p>
+    </header>
+
+    <!-- 2. Couple Stage (Clean SVG Vectors - Zero Box Problem) -->
+    <div class="glass-card couple-card">
+      <div class="stage-title">Bridge Between Two Hearts</div>
+      <div class="characters-stage" id="stage">
+        <div class="bridge-line"></div>
+        
+        <!-- Boy Vector -->
+        <div class="char-node" id="boyNode">
+          <div class="char-svg-wrap">
+            <svg viewBox="0 0 36 36" fill="none">
+              <!-- Cute Boy Head & Hair -->
+              <circle cx="18" cy="20" r="11" fill="#FFD1B3"/>
+              <path d="M7 17C7 10 11 6 18 6C25 6 29 10 29 17C28 12 25 9 18 9C11 9 8 12 7 17Z" fill="#3D2314"/>
+              <circle cx="14" cy="19" r="1.5" fill="#333"/>
+              <circle cx="22" cy="19" r="1.5" fill="#333"/>
+              <path d="M16 23C17 24.5 19 24.5 20 23" stroke="#D9534F" stroke-width="1.5" stroke-linecap="round"/>
+              <ellipse cx="12" cy="21.5" rx="1.5" ry="1" fill="#FF8A80" opacity="0.6"/>
+              <ellipse cx="24" cy="21.5" rx="1.5" ry="1" fill="#FF8A80" opacity="0.6"/>
+            </svg>
+          </div>
+          <span class="char-label">Dhaka</span>
+        </div>
+
+        <!-- Illustrated Hug Badge -->
+        <div class="hug-center" id="hugCenter">
+          <svg viewBox="0 0 36 36" fill="none">
+            <!-- Two hearts hugging -->
+            <path d="M18 31C18 31 6 22 6 13C6 8.5 9.5 5 14 5C16.5 5 18 6.5 18 6.5C18 6.5 19.5 5 22 5C26.5 5 30 8.5 30 13C30 22 18 31 18 31Z" fill="#FFF"/>
+            <path d="M14 17C14.8 17.8 16 17.8 16.8 17" stroke="#FF3377" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M19.2 17C20 17.8 21.2 17.8 22 17" stroke="#FF3377" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="18" cy="22" r="1.8" fill="#FF3377"/>
+          </svg>
+        </div>
+
+        <!-- Girl Vector -->
+        <div class="char-node" id="girlNode">
+          <div class="char-svg-wrap">
+            <svg viewBox="0 0 36 36" fill="none">
+              <!-- Cute Girl Head & Hair with Ribbon -->
+              <circle cx="18" cy="20" r="11" fill="#FFD1B3"/>
+              <path d="M6 18C6 9 10 6 18 6C26 6 30 9 30 18C30 25 29 27 28 27C27 21 26 10 18 10C10 10 9 21 8 27C7 27 6 25 6 18Z" fill="#2E180D"/>
+              <!-- Hair Bow -->
+              <circle cx="26" cy="11" r="3" fill="#FF3377"/>
+              <circle cx="14" cy="19" r="1.5" fill="#333"/>
+              <circle cx="22" cy="19" r="1.5" fill="#333"/>
+              <path d="M16 23C17 24.5 19 24.5 20 23" stroke="#D9534F" stroke-width="1.5" stroke-linecap="round"/>
+              <ellipse cx="12" cy="21.5" rx="1.8" ry="1.2" fill="#FF69B4" opacity="0.8"/>
+              <ellipse cx="24" cy="21.5" rx="1.8" ry="1.2" fill="#FF69B4" opacity="0.8"/>
+            </svg>
+          </div>
+          <span class="char-label">Jashore</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Distance & Live Quote -->
+    <div class="glass-card metric-card">
+      <div class="distance-counter">
+        <span id="kmCount">200</span>
+        <span class="unit">km left</span>
+      </div>
+      <div class="quote-box" id="quoteBox">
+        "200 km between us, but one heart."
+      </div>
+    </div>
+
+    <!-- 4. Bus Highway -->
+    <div class="glass-card road-card">
+      <div class="road-meta">
+        <span>📍 Dhaka</span>
+        <span style="color: #ff9ebb;">Express Route</span>
+        <span>Jashore 🏁</span>
+      </div>
+
+      <div class="road-track" id="roadTrack">
+        <div class="road-line"></div>
+        <div class="road-fill" id="roadFill"></div>
+        <div class="bus-sprite" id="bus">🚌</div>
+      </div>
+
+      <div class="stop-indicator">
+        <div>
+          <span class="pill pill-curr">Now</span>
+          <span class="stop-text" id="currStop">Dhaka</span>
+        </div>
+        <div style="text-align: right;">
+          <span class="pill pill-next">Next</span>
+          <span class="stop-text" id="nextStop">Mawa</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Horizontal Checkpoints -->
+    <div class="glass-card checkpoint-dots-bar" id="dotsBar"></div>
+
+    <!-- 6. Button -->
+    <div class="btn-wrap">
+      <button class="cta-btn" id="startBtn">Start our journey 🚌💗</button>
+    </div>
+
+  </div>
+
+  <!-- Final Popup Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="love-card-modal">
+      <div class="modal-hug-icon">
+        <svg viewBox="0 0 36 36" fill="none">
+          <path d="M18 31C18 31 6 22 6 13C6 8.5 9.5 5 14 5C16.5 5 18 6.5 18 6.5C18 6.5 19.5 5 22 5C26.5 5 30 8.5 30 13C30 22 18 31 18 31Z" fill="#FFF"/>
+          <path d="M14 17C14.8 17.8 16 17.8 16.8 17" stroke="#FF3377" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M19.2 17C20 17.8 21.2 17.8 22 17" stroke="#FF3377" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="18" cy="22" r="1.8" fill="#FF3377"/>
+        </svg>
+      </div>
+      <div class="modal-title">Jashore reached — 0 km.<br>Finally, together! ❤️</div>
+      <div class="modal-body">
+        Happy Birthday, my love! 🎂✨ No matter how many kilometers lie between Dhaka and Jashore, every single beat of my heart belongs only to you. No more distance between us!
+      </div>
+      <button class="replay-btn" id="replayBtn">Travel together again ↻</button>
+    </div>
+  </div>
+
+  <script>
+    const STOPS = [
+      { name: "Dhaka", short: "Dhaka", km: 200, pct: 0 },
+      { name: "Mawa · Munshiganj", short: "Mawa", km: 165, pct: 17.5 },
+      { name: "Padma Bridge", short: "Padma", km: 135, pct: 32.5 },
+      { name: "Bhanga · Faridpur", short: "Bhanga", km: 105, pct: 47.5 },
+      { name: "Bhatiapara · Gopalganj", short: "Bhatia", km: 75, pct: 62.5 },
+      { name: "Kalna Bridge", short: "Kalna", km: 45, pct: 77.5 },
+      { name: "Lohagara · Narail", short: "Lohagara", km: 22, pct: 89 },
+      { name: "Jashore", short: "Jashore", km: 0, pct: 100 }
+    ];
+
+    const QUOTES = [
+      { max: 200, min: 175, txt: "200 km between us, but one heart. ❤️" },
+      { max: 174, min: 140, txt: "Crossing rivers just to look into your eyes. ✨" },
+      { max: 139, min: 110, txt: "Over the Padma Bridge... flying closer to you! 🌉" },
+      { max: 109, min: 80, txt: "My heart is racing faster than this bus! 💓" },
+      { max: 79, min: 50, txt: "Every km passed is a second closer to you. 🌸" },
+      { max: 49, min: 25, txt: "Almost there, my love... getting butterflies! 🦋" },
+      { max: 24, min: 1, txt: "I can already feel your warm smile waiting! 💕" },
+      { max: 0, min: 0, txt: "We made it. Finally together! ❤️" }
+    ];
+
+    const kmCount = document.getElementById("kmCount");
+    const quoteBox = document.getElementById("quoteBox");
+    const startBtn = document.getElementById("startBtn");
+    const replayBtn = document.getElementById("replayBtn");
+    const bus = document.getElementById("bus");
+    const roadFill = document.getElementById("roadFill");
+    const roadTrack = document.getElementById("roadTrack");
+    const currStop = document.getElementById("currStop");
+    const nextStop = document.getElementById("nextStop");
+    const boyNode = document.getElementById("boyNode");
+    const girlNode = document.getElementById("girlNode");
+    const hugCenter = document.getElementById("hugCenter");
+    const dotsBar = document.getElementById("dotsBar");
+    const modalOverlay = document.getElementById("modalOverlay");
+    const starsBg = document.getElementById("starsBg");
+    const celebrationCanvas = document.getElementById("celebrationCanvas");
+
+    let isTraveling = false;
+    let animId = null;
+    let startTime = null;
+    const DURATION = 14000;
+
+    function renderDots() {
+      dotsBar.innerHTML = "";
+      STOPS.forEach((s, idx) => {
+        const wrap = document.createElement("div");
+        wrap.className = "cp-dot-wrap";
+        wrap.id = `dot-wrap-${idx}`;
+        wrap.innerHTML = `
+          <div class="cp-dot" id="dot-${idx}">${idx + 1}</div>
+          <span class="cp-tiny-name">${s.short}</span>
+        `;
+        dotsBar.appendChild(wrap);
+      });
+      updateUI(200);
+    }
+
+    function updateUI(remKm) {
+      const progress = ((200 - remKm) / 200) * 100;
+      let activeIdx = 0;
+      for (let i = 0; i < STOPS.length; i++) {
+        if (progress >= STOPS[i].pct) activeIdx = i;
+      }
+
+      currStop.textContent = STOPS[activeIdx].name;
+      nextStop.textContent = activeIdx < STOPS.length - 1 ? STOPS[activeIdx + 1].name : "Destination ❤️";
+
+      STOPS.forEach((_, i) => {
+        const wrap = document.getElementById(`dot-wrap-${i}`);
+        const dot = document.getElementById(`dot-${i}`);
+        if (!wrap || !dot) return;
+        wrap.classList.remove("completed", "active");
+
+        if (i < activeIdx) {
+          wrap.classList.add("completed");
+          dot.textContent = "✓";
+        } else if (i === activeIdx) {
+          wrap.classList.add("active");
+          dot.textContent = remKm === 0 ? "❤️" : String(i + 1);
+        } else {
+          dot.textContent = String(i + 1);
+        }
+      });
+    }
+
+    function updateQuote(km) {
+      for (let q of QUOTES) {
+        if (km <= q.max && km >= q.min) {
+          if (quoteBox.textContent !== q.txt) {
+            quoteBox.style.opacity = 0;
+            setTimeout(() => {
+              quoteBox.textContent = q.txt;
+              quoteBox.style.opacity = 1;
+            }, 120);
+          }
+          break;
+        }
+      }
+    }
+
+    function setBusPos(pct) {
+      const rect = roadTrack.getBoundingClientRect();
+      const pad = 12;
+      const travelW = rect.width - pad * 2;
+      const x = pad + travelW * pct;
+      bus.style.left = `${x}px`;
+      roadFill.style.width = `${pct * 100}%`;
+    }
+
+    function setCouplePos(pct) {
+      const stage = document.getElementById("stage");
+      const travel = Math.max(0, (stage.clientWidth / 2) - 44);
+      boyNode.style.transform = `translateX(${travel * pct}px)`;
+      girlNode.style.transform = `translateX(${-travel * pct}px)`;
+
+      if (pct >= 0.98) {
+        boyNode.style.opacity = "0";
+        girlNode.style.opacity = "0";
+        hugCenter.classList.add("active");
+      } else {
+        boyNode.style.opacity = "1";
+        girlNode.style.opacity = "1";
+        hugCenter.classList.remove("active");
+      }
+    }
+
+    function loop(now) {
+      if (!startTime) startTime = now;
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / DURATION);
+      const eased = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+      const currentKm = Math.round(200 - 200 * eased);
+      kmCount.textContent = currentKm;
+
+      setBusPos(eased);
+      setCouplePos(eased);
+      updateUI(currentKm);
+      updateQuote(currentKm);
+
+      if (progress < 1) {
+        animId = requestAnimationFrame(loop);
+      } else {
+        finish();
+      }
+    }
+
+    function start() {
+      if (isTraveling) return;
+      isTraveling = true;
+      startBtn.disabled = true;
+      startBtn.textContent = "Traveling to you... 🚌💨";
+      startTime = null;
+      animId = requestAnimationFrame(loop);
+    }
+
+    function finish() {
+      kmCount.textContent = "0";
+      quoteBox.textContent = "Jashore reached — 0 km. Finally, together! ❤️";
+      startCelebration();
+      setTimeout(() => {
+        modalOverlay.classList.add("show");
+      }, 700);
+    }
+
+    function reset() {
+      if (animId) cancelAnimationFrame(animId);
+      isTraveling = false;
+      startTime = null;
+
+      kmCount.textContent = "200";
+      quoteBox.textContent = '"200 km between us, but one heart."';
+      setBusPos(0);
+      setCouplePos(0);
+      updateUI(200);
+
+      modalOverlay.classList.remove("show");
+      startBtn.disabled = false;
+      startBtn.textContent = "Start our journey 🚌💗";
+      stopCelebration();
+    }
+
+    // Stars Canvas
+    function initStars() {
+      const ctx = starsBg.getContext("2d");
+      let w = (starsBg.width = window.innerWidth);
+      let h = (starsBg.height = window.innerHeight);
+      const stars = Array.from({ length: 40 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.5 + 0.5,
+        a: Math.random(),
+        s: Math.random() * 0.02 + 0.01
+      }));
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        stars.forEach(s => {
+          s.a += s.s;
+          if (s.a > 1 || s.a < 0.2) s.s = -s.s;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 210, 240, ${Math.abs(s.a)})`;
+          ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    // Full Screen Confetti / Hearts (Clean Spreading)
+    let celebRunning = false;
+    let particles = [];
+    function startCelebration() {
+      celebRunning = true;
+      const ctx = celebrationCanvas.getContext("2d");
+      celebrationCanvas.width = window.innerWidth;
+      celebrationCanvas.height = window.innerHeight;
+      particles = [];
+      const colors = ["#ff3377", "#ffd166", "#c77dff", "#ffffff", "#ff80aa"];
+
+      for (let i = 0; i < 65; i++) {
+        particles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * -100,
+          vx: (Math.random() - 0.5) * 3,
+          vy: Math.random() * 3 + 2.5,
+          size: Math.random() * 7 + 5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1
+        });
+      }
+
+      function draw() {
+        if (!celebRunning) return;
+        ctx.clearRect(0, 0, celebrationCanvas.width, celebrationCanvas.height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.y > window.innerHeight) p.y = -10;
+          ctx.save();
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+        if (celebRunning) requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    function stopCelebration() {
+      celebRunning = false;
+      const ctx = celebrationCanvas.getContext("2d");
+      ctx.clearRect(0, 0, celebrationCanvas.width, celebrationCanvas.height);
+    }
+
+    startBtn.addEventListener("click", start);
+    replayBtn.addEventListener("click", reset);
+    window.addEventListener("resize", () => {
+      if (!isTraveling) {
+        setBusPos(0);
+        setCouplePos(0);
+      }
+    });
+
+    renderDots();
+    initStars();
+    setBusPos(0);
+    setCouplePos(0);
+  </script>
+</body>
+</html>
